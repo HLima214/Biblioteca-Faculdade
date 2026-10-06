@@ -1,0 +1,20 @@
+# MongoDB local para desenvolvimento e testes.
+#   docker compose up -d --wait     # sobe e espera ficar saudável
+#   docker compose down             # para (os dados ficam no volume)
+#   docker compose down -v          # para e apaga os dados
+services:
+  mongo:
+    image: mongo:7            # precisa de MongoDB >= 5.0 ($dateDiff usado no R6)
+    container_name: sfi-biblioteca-mongo
+    ports:
+      - "127.0.0.1:27017:27017"   # só acessível da própria máquina
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  mongo_data:
